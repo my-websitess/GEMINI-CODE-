@@ -115,10 +115,10 @@
 <body>
 
 <header>
-  <div class="eyebrow">WhatsApp Catalog · Demo</div>
-  <h1>Rangrezz <em>Studio</em></h1>
+  <div class="eyebrow">WhatsApp Catalog </div>
+  <h1> Aruna Textile Hub <em>Studio</em></h1>
   <p class="tagline">Select karo, share karo — kisi ko bhi, seedha WhatsApp par.</p>
-  <p class="hint">💬 Send button click karte hi WhatsApp khulega jahan aap khud contact choose karoge — koi number pehle se fix nahi hai.</p>
+  <p class="hint"></p>
 </header>
 
 <div class="controls">
@@ -143,8 +143,8 @@
 </div>
 
 <div class="count-row">
-  <span id="countText">Loading catalog...</span>
-  <button class="select-all-btn" id="selectAllBtn" style="display:none">Select All</button>
+  <span id="countText"></span>
+  <button class="select-all-btn" id="selectAllBtn">Select All</button>
 </div>
 <div class="grid" id="grid"></div>
 <div id="emptyState" style="display:none" class="empty">
@@ -176,51 +176,56 @@
 <script>
   let products = [];
 
-  // Robust CSV Line Splitter (Ignores commas inside quotes)
-  function parseCSVLine(line) {
+  // A real image/product URL can contain commas (e.g. Cloudinary transform
+  // params like q_auto,f_auto,w_500). Google Sheets wraps such fields in
+  // quotes in its CSV export, so a naive row.split(",") shreds the URL.
+  // This parser respects quotes properly.
+  function parseCSVLine(line){
     const result = [];
-    let start = 0;
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-      if (line[i] === '"') {
-        inQuotes = !inQuotes;
-      } else if (line[i] === ',' && !inQuotes) {
-        result.push(line.substring(start, i).trim().replace(/^"|"$/g, ''));
-        start = i + 1;
+    let cur = '', inQuotes = false;
+    for(let i=0; i<line.length; i++){
+      const ch = line[i];
+      if(ch === '"'){
+        if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = !inQuotes;
+      } else if(ch === ',' && !inQuotes){
+        result.push(cur); cur = '';
+      } else {
+        cur += ch;
       }
     }
-    result.push(line.substring(start).trim().replace(/^"|"$/g, ''));
+    result.push(cur);
     return result;
   }
 
   async function loadProductsFromSheet() {
+    // 1. Apna link yaha rehne dein
     const sheetCSVUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRE7C6_CKPQTvaU-uvxrLz69YOEtAmh7Sdsw0RDr52MsoyX9b8gD9b0El1H23o4gxBiy7woMCBzRmWJ/pub?gid=0&single=true&output=csv"; 
+    
+    // 2. Wo purana 'if' block yaha se hat gaya hai
 
     try {
       const response = await fetch(sheetCSVUrl);
-      if(!response.ok) throw new Error("Network response was not ok");
-      
       const data = await response.text();
-      const rows = data.split(/\r?\n/).filter(r => r.trim().length > 0).slice(1);
       
+      const rows = data.split(/\r\n|\n|\r/).slice(1).filter(r => r.trim());
       products = rows.map((row, index) => {
         const cols = parseCSVLine(row);
         return {
           id: index + 1,
-          name: cols[0] || '',
-          category: cols[1] || 'General',
-          price: parseInt((cols[2] || '0').replace(/[^0-9]/g, '')) || 0,
-          image: cols[3] || ''
+          name: cols[0]?.replace(/"/g, '').trim(),
+          category: cols[1]?.replace(/"/g, '').trim(),
+          price: parseInt(cols[2]) || 0,
+          image: cols[3]?.replace(/"/g, '').trim()
         };
       }).filter(p => p.name);
-
+      
       render(); 
     } catch (error) {
       console.error("Data load karne me dikkat aayi:", error);
-      document.getElementById('countText').textContent = "Data load nahi ho paya!";
-      alert("Sheet se data fetch nahi ho paya. Please Google Sheet publication status aur CSV link check karein.");
+      alert("Sheet se data fetch nahi ho paya. CSV link check karein.");
     }
-  }
+}
 
   const CAT_COLORS = {
     Saree:['#7A1E3C','#D4A657'], Kurti:['#1F5C52','#6FBFAE'], Lehenga:['#8E2A5B','#E8B4C4'],
@@ -270,24 +275,7 @@
     return list;
   }
 
-  function buildMessage(list){
-    if(list.length === 1){
-      const p = list[0];
-      let msg = `Hi! Ye dekhiye — ${p.name} (${p.category}), Rs.${p.price.toLocaleString('en-IN')}.`;
-      if(p.image) msg += `\n${p.image}`;
-      return msg;
-    }
-    let msg = `Hi! Ye kuch items dekhiye:\n\n`;
-    list.forEach((p,i)=>{
-      msg += `${i+1}. ${p.name} (${p.category}) — Rs.${p.price.toLocaleString('en-IN')}\n`;
-      if(p.image) msg += `${p.image}\n`;
-      msg += `\n`;
-    });
-    return msg.trim();
-  }
-
   async function shareProducts(list){
-    const message = buildMessage(list);
     const withImages = list.filter(p=>p.image);
     let files = [];
     if(withImages.length){
@@ -300,17 +288,19 @@
         }));
       }catch(err){ files = []; }
     }
+    const names = list.map(p=>p.name).join(', ');
     try{
+      // Photo already carries the price, so we share ONLY the image(s) — no caption text.
       if(files.length && navigator.canShare && navigator.canShare({ files })){
-        await navigator.share({ files, text: message });
+        await navigator.share({ files });
         return;
       }
       if(navigator.share){
-        await navigator.share({ text: message });
+        await navigator.share({ text: names });
         return;
       }
-    }catch(err){ /* fall back */ }
-    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    }catch(err){ /* user cancelled or share blocked — fall back below */ }
+    window.open(`https://wa.me/?text=${encodeURIComponent(names)}`, '_blank');
   }
   window.shareProducts = shareProducts;
 
@@ -325,24 +315,21 @@
       }));
   }
 
-  function processImageForPDF(dataUrl, targetAspect, maxDim){
+  // Resizes (never crops) so the full photo is kept intact — page will be shaped
+  // to match this image exactly, so nothing needs to be cut off.
+  function resizeImageForPDF(dataUrl, maxDim){
     return new Promise((resolve,reject)=>{
       const img = new Image();
       img.onload = ()=>{
-        const srcAspect = img.width / img.height;
-        let cropW, cropH, sx, sy;
-        if(srcAspect > targetAspect){
-          cropH = img.height; cropW = cropH * targetAspect;
-          sx = (img.width - cropW)/2; sy = 0;
-        } else {
-          cropW = img.width; cropH = cropW / targetAspect;
-          sx = 0; sy = (img.height - cropH)/2;
+        let w = img.width, h = img.height;
+        if(Math.max(w,h) > maxDim){
+          const scale = maxDim / Math.max(w,h);
+          w = Math.round(w*scale); h = Math.round(h*scale);
         }
-        const outW = maxDim, outH = Math.round(maxDim/targetAspect);
         const canvas = document.createElement('canvas');
-        canvas.width = outW; canvas.height = outH;
-        canvas.getContext('2d').drawImage(img, sx, sy, cropW, cropH, 0, 0, outW, outH);
-        resolve(canvas.toDataURL('image/jpeg', 0.72));
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.82), width:w, height:h });
       };
       img.onerror = reject;
       img.src = dataUrl;
@@ -361,42 +348,37 @@
 
   async function generateCatalogPDF(list){
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:'mm', format:'a4' });
-    const pageW = 210, margin = 12;
-    const contentW = pageW - margin*2; 
-    const imgH = 200;                  
-    const targetAspect = contentW / imgH;
+    let doc = null;
 
     for(let i=0; i<list.length; i++){
       const p = list[i];
-      if(i > 0) doc.addPage();
-
-      doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor('#7A1E3C');
-      doc.text('Rangrezz Studio', margin, 14);
-      doc.setDrawColor('#D4A657'); doc.setLineWidth(0.4);
-      doc.line(margin, 17, pageW-margin, 17);
-
-      const startY = 22;
 
       if(p.image){
         try{
           const raw = await toDataURL(p.image);
-          const cropped = await processImageForPDF(raw, targetAspect, 1000);
-          doc.addImage(cropped, 'JPEG', margin, startY, contentW, imgH, undefined, 'FAST');
-        }catch(e){
-          drawPlaceholder(doc, margin, startY, contentW, imgH, p.category);
-        }
-      } else {
-        drawPlaceholder(doc, margin, startY, contentW, imgH, p.category);
+          const img = await resizeImageForPDF(raw, 1200);
+          // Page width is fixed; height follows the photo's own aspect ratio —
+          // no crop, no caption, no wasted space. Since your real photos already
+          // carry the price/category, the image itself IS the page.
+          const pageW = 100, pageH = pageW * (img.height / img.width);
+          if(!doc) doc = new jsPDF({ unit:'mm', format:[pageW, pageH] });
+          else doc.addPage([pageW, pageH]);
+          doc.addImage(img.dataUrl, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
+          continue;
+        }catch(e){ /* no usable photo — fall through to the labeled placeholder below */ }
       }
 
-      const textY = startY + imgH + 12;
-      doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor('#222222');
-      doc.text(p.name, margin, textY, { maxWidth: contentW });
-      doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor('#999999');
-      doc.text(p.category, margin, textY + 8);
-      doc.setFont('helvetica','bold'); doc.setFontSize(20); doc.setTextColor('#B5862F');
-      doc.text('Rs. ' + p.price.toLocaleString('en-IN'), margin, textY + 20);
+      // Only used when an item has no photo at all.
+      const pageW = 100, pageH = 130;
+      if(!doc) doc = new jsPDF({ unit:'mm', format:[pageW, pageH] });
+      else doc.addPage([pageW, pageH]);
+      drawPlaceholder(doc, 8, 8, pageW-16, pageH-50, p.category);
+      doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor('#222222');
+      doc.text(p.name, 8, pageH-32, { maxWidth: pageW-16 });
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor('#999999');
+      doc.text(p.category, 8, pageH-24);
+      doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor('#B5862F');
+      doc.text('Rs. ' + p.price.toLocaleString('en-IN'), 8, pageH-12);
     }
     return doc.output('blob');
   }
