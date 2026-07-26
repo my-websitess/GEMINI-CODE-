@@ -70,7 +70,7 @@
   .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; transition:outline .15s ease; }
   .card.selected{ outline:2px solid var(--gold); outline-offset:-1px; }
 
-  .swatch{ position:relative; height:150px; display:flex; align-items:flex-end; padding:12px; overflow:hidden;
+  .swatch{ position:relative; height:150px; display:flex; align-items:flex-end; padding:12px; overflow:hidden; cursor:pointer;
     background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1.4px), linear-gradient(135deg, var(--g1), var(--g2));
     background-size: 14px 14px, cover; }
   .swatch img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; opacity:0; transition:opacity .35s ease; }
@@ -170,11 +170,11 @@
     <button class="clear-btn" id="clearSelBtn">Clear</button>
     <button class="send-sel-btn" id="sendSelectedBtn">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.9.53 3.68 1.44 5.2L2 22l4.94-1.4A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.06.87.85-2.98-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
-      Text
+      Photo
     </button>
     <button class="pdf-btn" id="sendPdfBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-      <span id="pdfBtnLabel">PDF banake bhejo</span>
+      <span id="pdfBtnLabel">PDF</span>
     </button>
   </div>
 </div>
@@ -463,8 +463,8 @@
     const isSel = selected.has(p.id);
     return `
       <div class="card ${isSel?'selected':''}" data-id="${p.id}">
-        <div class="swatch" style="--g1:${g1};--g2:${g2}">
-          <div class="select-box ${isSel?'checked':''}" onclick="toggleSelect(${p.id})">
+        <div class="swatch" style="--g1:${g1};--g2:${g2}" onclick="toggleSelect(${p.id})">
+          <div class="select-box ${isSel?'checked':''}">
             <svg viewBox="0 0 24 24" fill="none" stroke="#1B0E14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </div>
           ${imageInner}
