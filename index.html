@@ -70,10 +70,10 @@
   .card{ background:var(--bg-card); border:1px solid var(--line); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; transition:outline .15s ease; }
   .card.selected{ outline:2px solid var(--gold); outline-offset:-1px; }
 
-  .swatch{ position:relative; height:150px; display:flex; align-items:flex-end; padding:12px; overflow:hidden; cursor:pointer;
+  .swatch{ position:relative; height:230px; display:flex; align-items:flex-end; padding:12px; overflow:hidden; cursor:pointer;
     background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1.4px), linear-gradient(135deg, var(--g1), var(--g2));
     background-size: 14px 14px, cover; }
-  .swatch img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; opacity:0; transition:opacity .35s ease; }
+  .swatch img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:var(--bg-card); z-index:1; opacity:0; transition:opacity .35s ease; }
   .swatch img.loaded{ opacity:1; }
   .swatch::after{ content:""; position:absolute; left:0; right:0; bottom:-1px; height:12px; z-index:2; background:var(--bg-card);
     clip-path: polygon(0% 0%,4% 100%,8% 0%,12% 100%,16% 0%,20% 100%,24% 0%,28% 100%,32% 0%,36% 100%,40% 0%,44% 100%,48% 0%,52% 100%,56% 0%,60% 100%,64% 0%,68% 100%,72% 0%,76% 100%,80% 0%,84% 100%,88% 0%,92% 100%,96% 0%,100% 100%,100% 0%); }
@@ -84,14 +84,9 @@
   .select-box svg{ width:13px; height:13px; opacity:0; }
   .select-box.checked svg{ opacity:1; }
 
-  .card-body{ padding:14px 14px 16px; display:flex; flex-direction:column; gap:8px; flex:1; }
-  .cat-tag{ align-self:flex-start; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; border:1px dashed var(--blush); color:var(--blush); border-radius:999px; padding:3px 9px; }
-  .card-name{ font-size:14.5px; font-weight:600; line-height:1.3; }
-  .card-price{ font-family:'Fraunces', serif; font-weight:700; font-size:19px; color:var(--gold); margin-top:auto; }
-  .wa-btn{ margin-top:6px; display:flex; align-items:center; justify-content:center; gap:7px; background:var(--whatsapp); color:#0F1F17; border:none; border-radius:999px; padding:10px 12px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
-  .wa-btn:hover{ filter:brightness(1.08); }
-  .wa-btn svg{ width:15px; height:15px; }
-
+  .card-body{ padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .cat-tag{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; border:1px dashed var(--blush); color:var(--blush); border-radius:999px; padding:3px 9px; white-space:nowrap; }
+  .card-price{ font-family:'Fraunces', serif; font-weight:700; font-size:17px; color:var(--gold); white-space:nowrap; }
   .empty{ max-width:1080px; margin:30px auto; padding:40px 20px; text-align:center; color:var(--ivory-dim); }
   .empty strong{ display:block; color:var(--ivory); font-family:'Fraunces',serif; font-size:20px; margin-bottom:6px; }
 
@@ -99,18 +94,63 @@
   #loadMoreBtn{ background:transparent; border:1.5px solid var(--gold); color:var(--gold); padding:11px 26px; border-radius:999px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; }
   #loadMoreBtn:hover{ background:var(--gold); color:#211016; }
 
-  .selection-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--bg-elevated); border-top:1px solid var(--gold); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:60; transform:translateY(110%); transition:transform .25s ease; }
-  .selection-bar.show{ transform:translateY(0); }
-  .selection-bar .count{ font-weight:700; font-family:'Fraunces',serif; font-size:15px; }
-  .selection-bar .actions{ display:flex; gap:10px; }
-  .clear-btn{ background:transparent; border:1px solid var(--line); color:var(--ivory-dim); padding:10px 16px; border-radius:9px; font-family:'Manrope',sans-serif; font-size:13px; cursor:pointer; }
-  .send-sel-btn{ background:transparent; border:1.5px solid var(--whatsapp); color:var(--whatsapp); border-radius:9px; padding:10px 16px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:7px; }
-  .send-sel-btn svg{ width:15px; height:15px; }
-  .pdf-btn{ background:var(--gold); color:#211016; border:none; border-radius:9px; padding:10px 18px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:7px; }
-  .pdf-btn svg{ width:15px; height:15px; }
-  .pdf-btn:disabled{ opacity:.6; cursor:wait; }
+  /* Floating cart bar */
+  .cart-bar{ position:fixed; left:0; right:0; bottom:0; background:var(--bg-elevated); border-top:1px solid var(--gold); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:60; transform:translateY(110%); transition:transform .25s ease; }
+  .cart-bar.show{ transform:translateY(0); }
+  .cart-bar-info{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .cart-icon{ font-size:18px; }
+  .cart-bar-count{ font-weight:700; font-size:14px; }
+  .cart-bar-total{ font-family:'Fraunces',serif; font-weight:700; color:var(--gold); font-size:15px; }
+  .view-cart-btn{ background:var(--gold); color:#211016; border:none; border-radius:9px; padding:11px 20px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13px; cursor:pointer; white-space:nowrap; }
+  .view-cart-btn:hover{ filter:brightness(1.08); }
+  .cart-bar-clear-btn{ background:transparent; border:1px solid var(--line); color:var(--ivory-dim); width:34px; height:34px; border-radius:50%; font-size:16px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .cart-bar-clear-btn:hover{ border-color:var(--blush); color:var(--blush); }
+
+  /* Slide-in cart drawer */
+  .cart-overlay{ position:fixed; inset:0; background:rgba(20,14,10,0.45); z-index:70; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+  .cart-overlay.show{ opacity:1; pointer-events:auto; }
+  .cart-drawer{ position:fixed; top:0; right:0; bottom:0; width:min(380px, 90vw); background:var(--bg-elevated); z-index:80; display:flex; flex-direction:column; transform:translateX(100%); transition:transform .3s ease; box-shadow:-8px 0 30px rgba(0,0,0,0.15); }
+  .cart-drawer.show{ transform:translateX(0); }
+  .cart-drawer-header{ padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+  .cart-drawer-header h3{ margin:0; font-family:'Fraunces',serif; font-size:19px; }
+  .cart-clear-link{ background:none; border:none; color:var(--blush); font-family:'Manrope',sans-serif; font-size:12.5px; text-decoration:underline; cursor:pointer; padding:0; }
+  .cart-close-btn{ background:none; border:none; font-size:22px; line-height:1; color:var(--ivory-dim); cursor:pointer; padding:0 0 0 14px; }
+  .cart-drawer-items{ flex:1; overflow-y:auto; padding:14px 20px; display:flex; flex-direction:column; gap:14px; }
+  .cart-empty-msg{ text-align:center; color:var(--ivory-dim); font-size:13.5px; padding:30px 10px; }
+  .cart-item{ display:flex; gap:12px; align-items:center; }
+  .cart-item-img{ width:56px; height:56px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--bg-card); }
+  .cart-item-info{ flex:1; min-width:0; }
+  .cart-item-name{ font-size:13.5px; font-weight:600; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cart-item-price{ font-size:12px; color:var(--ivory-dim); margin-top:2px; }
+  .cart-item-qty{ display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .qty-btn{ width:26px; height:26px; border-radius:50%; border:1px solid var(--gold); background:transparent; color:var(--gold); font-size:15px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; }
+  .qty-btn:hover{ background:var(--gold); color:#211016; }
+  .cart-item-qty span{ font-size:13.5px; font-weight:700; min-width:14px; text-align:center; }
+  .cart-drawer-footer{ padding:16px 20px 20px; border-top:1px solid var(--line); }
+  .cart-total-row{ display:flex; align-items:center; justify-content:space-between; font-family:'Fraunces',serif; font-size:16px; font-weight:700; margin-bottom:12px; }
+  .cart-total-row span:last-child{ color:var(--gold); }
+  .cart-send-btn{ width:100%; background:var(--whatsapp); color:#0F1F17; border:none; border-radius:999px; padding:13px 12px; font-family:'Manrope',sans-serif; font-weight:700; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .cart-send-btn:hover{ filter:brightness(1.08); }
+  .cart-send-btn svg{ width:16px; height:16px; }
 
   footer{ text-align:center; padding:24px 20px 40px; color:var(--ivory-dim); font-size:12px; border-top:1px solid var(--line); }
+
+  /* Fullscreen image viewer — swipe between photos, double-tap to zoom */
+  .lightbox-overlay{ position:fixed; inset:0; background:rgba(10,6,8,0.97); z-index:200; display:none; flex-direction:column; }
+  .lightbox-overlay.show{ display:flex; }
+  .lightbox-close{ position:absolute; top:14px; right:14px; z-index:5; background:rgba(255,255,255,0.12); border:none; color:#fff; width:38px; height:38px; border-radius:50%; font-size:22px; line-height:1; cursor:pointer; }
+  .lightbox-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:5; background:rgba(255,255,255,0.12); border:none; color:#fff; width:42px; height:42px; border-radius:50%; font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .lightbox-prev{ left:10px; } .lightbox-next{ right:10px; }
+  .lightbox-counter{ position:absolute; top:18px; left:16px; z-index:5; color:rgba(255,255,255,0.75); font-family:'Manrope',sans-serif; font-size:12.5px; }
+  .lightbox-stage{ flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; touch-action:none; }
+  .lightbox-stage img{ max-width:92%; max-height:78vh; object-fit:contain; transition:transform .25s ease; transform-origin:center center; }
+  .lightbox-stage img.zoomed{ cursor:grab; }
+  .lightbox-hint{ text-align:center; color:rgba(255,255,255,0.4); font-size:11px; margin-top:6px; }
+  .lightbox-info{ padding:12px 20px 26px; text-align:center; color:#fff; }
+  .lightbox-cat{ font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--blush); margin-bottom:4px; }
+  .lightbox-price{ font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--gold); margin-bottom:12px; }
+  .lightbox-add-btn{ background:var(--gold); color:#211016; border:none; border-radius:999px; padding:11px 30px; font-family:'Manrope',sans-serif; font-weight:700; font-size:13.5px; cursor:pointer; }
+  .lightbox-add-btn.added{ background:var(--whatsapp); color:#0F1F17; }
 
   @media (max-width:480px){
     .grid{ grid-template-columns:repeat(2, 1fr); gap:12px; }
@@ -164,24 +204,60 @@
 
 <footer>Demo catalog</footer>
 
-<div class="selection-bar" id="selectionBar">
-  <div class="count" id="selCount">0 items selected</div>
-  <div class="actions">
-    <button class="clear-btn" id="clearSelBtn">Clear</button>
-    <button class="send-sel-btn" id="sendSelectedBtn">
+<div class="cart-bar" id="cartBar">
+  <div class="cart-bar-info">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-bar-count" id="cartBarCount">0 Items Selected</span>
+    <span class="cart-bar-total" id="cartBarTotal">Total: ₹0</span>
+  </div>
+  <button class="cart-bar-clear-btn" id="cartBarClearBtn" title="Selection clear karein">✕</button>
+  <button class="view-cart-btn" id="viewCartBtn">View Cart</button>
+</div>
+
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header">
+    <h3>Your Cart</h3>
+    <div style="display:flex; align-items:center;">
+      <button class="cart-clear-link" id="cartClearBtn">Clear all</button>
+      <button class="cart-close-btn" id="cartCloseBtn">&times;</button>
+    </div>
+  </div>
+  <div class="cart-drawer-items" id="cartItemsList"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-total-row">
+      <span>Total Bill</span>
+      <span id="cartDrawerTotal">₹0</span>
+    </div>
+    <button class="cart-send-btn" id="cartSendBtn">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.9.53 3.68 1.44 5.2L2 22l4.94-1.4A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.06.87.85-2.98-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
-      Photo
-    </button>
-    <button class="pdf-btn" id="sendPdfBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-      <span id="pdfBtnLabel">PDF</span>
+      Send Order to Aruna Textile
     </button>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<div class="lightbox-overlay" id="lightboxOverlay">
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#8249;</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext">&#8250;</button>
+  <div class="lightbox-stage" id="lightboxStage">
+    <img id="lightboxImg" src="" alt="">
+  </div>
+  <div class="lightbox-hint">Swipe se agla/pichla · double-tap se zoom</div>
+  <div class="lightbox-info">
+    <div class="lightbox-cat" id="lightboxCat"></div>
+    <div class="lightbox-price" id="lightboxPrice"></div>
+    <button class="lightbox-add-btn" id="lightboxAddBtn">+ Add to Cart</button>
+  </div>
+</div>
+
 <script>
   let products = [];
+
+  // Apna business WhatsApp number yahan bina "+" ya space ke dalein, jaise "91XXXXXXXXXX".
+  // Khaali chhod dene par order bhejte waqt WhatsApp customer ko khud contact chunne dega.
+  const WHATSAPP_NUMBER = "";
 
   // A real image/product URL can contain commas (e.g. Cloudinary transform
   // params like q_auto,f_auto,w_500). Google Sheets wraps such fields in
@@ -245,7 +321,7 @@
   let sortBy = 'relevance';
   let visibleCount = 24;
   const PAGE_SIZE = 24;
-  let selected = new Set();
+  let cart = new Map(); // productId -> quantity
 
   function parseQuery(q){
     q = q.toLowerCase().trim();
@@ -282,10 +358,277 @@
     return list;
   }
 
-  async function shareProducts(list){
-    const withImages = list.filter(p=>p.image);
-    let files = [];
+  function toggleSelect(id){
+    if(cart.has(id)) cart.delete(id); else cart.set(id, 1);
+    const card = document.querySelector(`.card[data-id="${id}"]`);
+    if(card){
+      card.classList.toggle('selected', cart.has(id));
+      card.querySelector('.select-box').classList.toggle('checked', cart.has(id));
+    }
+    renderCartBar();
+    renderCartDrawer();
+  }
+  window.toggleSelect = toggleSelect;
+
+  function incrementQty(id){
+    cart.set(id, (cart.get(id) || 0) + 1);
+    renderCartBar();
+    renderCartDrawer();
+  }
+  window.incrementQty = incrementQty;
+
+  function decrementQty(id){
+    const q = cart.get(id) || 0;
+    if(q <= 1){
+      cart.delete(id);
+      const card = document.querySelector(`.card[data-id="${id}"]`);
+      if(card){
+        card.classList.remove('selected');
+        const box = card.querySelector('.select-box');
+        if(box) box.classList.remove('checked');
+      }
+    } else {
+      cart.set(id, q - 1);
+    }
+    renderCartBar();
+    renderCartDrawer();
+  }
+  window.decrementQty = decrementQty;
+
+  // ---------- Fullscreen image viewer: swipe between photos, tap any spot to zoom + drag to pan ----------
+  let lightboxList = [];
+  let lightboxIndex = 0;
+  let lightboxZoomed = false;
+  let lbScale = 1, lbTx = 0, lbTy = 0, lbNaturalRect = null;
+  const LB_ZOOM = 2.4;
+
+  function openLightbox(id){
+    lightboxList = getFiltered();
+    lightboxIndex = lightboxList.findIndex(p=>p.id===id);
+    if(lightboxIndex === -1) lightboxIndex = 0;
+    renderLightbox();
+    document.getElementById('lightboxOverlay').classList.add('show');
+  }
+  window.openLightbox = openLightbox;
+
+  function closeLightbox(){
+    document.getElementById('lightboxOverlay').classList.remove('show');
+    resetLightboxZoom();
+  }
+
+  function resetLightboxZoom(){
+    lbScale = 1; lbTx = 0; lbTy = 0; lightboxZoomed = false;
+    const img = document.getElementById('lightboxImg');
+    img.style.transition = 'transform .25s ease';
+    img.style.transform = '';
+    img.classList.remove('zoomed');
+  }
+
+  function applyLightboxTransform(){
+    document.getElementById('lightboxImg').style.transform = `translate(${lbTx}px, ${lbTy}px) scale(${lbScale})`;
+  }
+
+  // Keeps the photo from being dragged past its own edges
+  function clampLightboxPan(){
+    if(!lbNaturalRect) return;
+    const stageRect = document.getElementById('lightboxStage').getBoundingClientRect();
+    const maxX = Math.max(0, (lbNaturalRect.width * lbScale - stageRect.width) / 2);
+    const maxY = Math.max(0, (lbNaturalRect.height * lbScale - stageRect.height) / 2);
+    lbTx = Math.min(maxX, Math.max(-maxX, lbTx));
+    lbTy = Math.min(maxY, Math.max(-maxY, lbTy));
+  }
+
+  // Zooms in centered exactly on the tapped point — any corner, not just the middle
+  function zoomLightboxAt(clientX, clientY){
+    const img = document.getElementById('lightboxImg');
+    lbNaturalRect = img.getBoundingClientRect(); // measured at scale 1, before zooming
+    const cx = lbNaturalRect.left + lbNaturalRect.width / 2;
+    const cy = lbNaturalRect.top + lbNaturalRect.height / 2;
+    lbScale = LB_ZOOM;
+    lbTx = -lbScale * (clientX - cx);
+    lbTy = -lbScale * (clientY - cy);
+    clampLightboxPan();
+    img.style.transition = 'transform .25s ease';
+    applyLightboxTransform();
+    lightboxZoomed = true;
+    img.classList.add('zoomed');
+  }
+
+  function toggleLightboxZoom(clientX, clientY){
+    if(lightboxZoomed) resetLightboxZoom();
+    else zoomLightboxAt(clientX, clientY);
+  }
+
+  function renderLightbox(){
+    const p = lightboxList[lightboxIndex];
+    if(!p) return;
+    resetLightboxZoom();
+    const img = document.getElementById('lightboxImg');
+    img.src = p.image || '';
+    img.style.display = p.image ? 'block' : 'none';
+    document.getElementById('lightboxCounter').textContent = `${lightboxIndex+1} / ${lightboxList.length}`;
+    document.getElementById('lightboxCat').textContent = p.category;
+    document.getElementById('lightboxPrice').textContent = '₹' + p.price.toLocaleString('en-IN');
+    const addBtn = document.getElementById('lightboxAddBtn');
+    const inCart = cart.has(p.id);
+    addBtn.textContent = inCart ? '✓ Added — Tap to Remove' : '+ Add to Cart';
+    addBtn.classList.toggle('added', inCart);
+  }
+
+  function lightboxPrev(){ lightboxIndex = (lightboxIndex - 1 + lightboxList.length) % lightboxList.length; renderLightbox(); }
+  function lightboxNext(){ lightboxIndex = (lightboxIndex + 1) % lightboxList.length; renderLightbox(); }
+
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxOverlay').addEventListener('click', (e)=>{ if(e.target.id==='lightboxOverlay') closeLightbox(); });
+  document.getElementById('lightboxPrev').addEventListener('click', lightboxPrev);
+  document.getElementById('lightboxNext').addEventListener('click', lightboxNext);
+  document.getElementById('lightboxAddBtn').addEventListener('click', ()=>{
+    const p = lightboxList[lightboxIndex];
+    if(p) toggleSelect(p.id);
+    renderLightbox();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(!document.getElementById('lightboxOverlay').classList.contains('show')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft') lightboxPrev();
+    if(e.key === 'ArrowRight') lightboxNext();
+  });
+
+  // Touch: swipe = prev/next photo (only when not zoomed). Tap-tap = zoom to that
+  // exact spot. Drag while zoomed = pan around to see any corner of the photo.
+  (function(){
+    const stage = document.getElementById('lightboxStage');
+    const img = document.getElementById('lightboxImg');
+    let startX = 0, startY = 0, lastTap = 0;
+    let dragging = false, dragStartTx = 0, dragStartTy = 0;
+
+    stage.addEventListener('touchstart', e=>{
+      startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+      if(lightboxZoomed){
+        dragging = true;
+        dragStartTx = lbTx; dragStartTy = lbTy;
+        img.style.transition = 'none';
+      }
+    }, { passive: true });
+
+    stage.addEventListener('touchmove', e=>{
+      if(!dragging || !lightboxZoomed) return;
+      e.preventDefault();
+      lbTx = dragStartTx + (e.touches[0].clientX - startX);
+      lbTy = dragStartTy + (e.touches[0].clientY - startY);
+      clampLightboxPan();
+      applyLightboxTransform();
+    }, { passive: false });
+
+    stage.addEventListener('touchend', e=>{
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      const moved = Math.abs(dx) > 10 || Math.abs(dy) > 10;
+      dragging = false;
+      img.style.transition = 'transform .25s ease';
+
+      if(!lightboxZoomed && moved && Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){
+        if(dx > 0) lightboxPrev(); else lightboxNext();
+        return;
+      }
+      if(!moved || lightboxZoomed){
+        const now = Date.now();
+        if(now - lastTap < 300){
+          toggleLightboxZoom(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+        }
+        lastTap = now;
+      }
+    });
+
+    // Desktop bonus: double-click to zoom to that spot too
+    stage.addEventListener('dblclick', e=>{ toggleLightboxZoom(e.clientX, e.clientY); });
+  })();
+
+
+  function cartTotals(){
+    let totalItems = 0, totalPrice = 0;
+    cart.forEach((qty, id)=>{
+      const p = products.find(x=>x.id===id);
+      if(!p) return;
+      totalItems += qty;
+      totalPrice += p.price * qty;
+    });
+    return { totalItems, totalPrice };
+  }
+
+  function renderCartBar(){
+    const bar = document.getElementById('cartBar');
+    if(cart.size === 0){ bar.classList.remove('show'); return; }
+    const { totalItems, totalPrice } = cartTotals();
+    bar.classList.add('show');
+    document.getElementById('cartBarCount').textContent = `${totalItems} Item${totalItems>1?'s':''} Selected`;
+    document.getElementById('cartBarTotal').textContent = `Total: ₹${totalPrice.toLocaleString('en-IN')}`;
+  }
+
+  function renderCartDrawer(){
+    const list = document.getElementById('cartItemsList');
+    const entries = [...cart.entries()];
+    if(entries.length === 0){
+      list.innerHTML = `<div class="cart-empty-msg">Cart khaali hai — kisi bhi photo par tap karke item add karein.</div>`;
+    } else {
+      list.innerHTML = entries.map(([id, qty])=>{
+        const p = products.find(x=>x.id===id);
+        if(!p) return '';
+        const [g1] = getColors(p.category);
+        const thumb = p.image
+          ? `<img class="cart-item-img" src="${p.image}" alt="${p.name}">`
+          : `<div class="cart-item-img" style="background:${g1}"></div>`;
+        return `
+          <div class="cart-item" data-id="${p.id}">
+            ${thumb}
+            <div class="cart-item-info">
+              <div class="cart-item-name">${p.name}</div>
+              <div class="cart-item-price">₹${p.price.toLocaleString('en-IN')} × ${qty} = ₹${(p.price*qty).toLocaleString('en-IN')}</div>
+            </div>
+            <div class="cart-item-qty">
+              <button class="qty-btn" onclick="decrementQty(${p.id})">−</button>
+              <span>${qty}</span>
+              <button class="qty-btn" onclick="incrementQty(${p.id})">+</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+    const { totalPrice } = cartTotals();
+    document.getElementById('cartDrawerTotal').textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
+  }
+
+  function openCart(){
+    document.getElementById('cartDrawer').classList.add('show');
+    document.getElementById('cartOverlay').classList.add('show');
+  }
+  function closeCart(){
+    document.getElementById('cartDrawer').classList.remove('show');
+    document.getElementById('cartOverlay').classList.remove('show');
+  }
+
+  async function sendCartOrder(){
+    const entries = [...cart.entries()];
+    if(entries.length === 0) return;
+    let totalItems = 0, totalPrice = 0;
+    const cartProducts = [];
+    const lines = entries.map(([id, qty], i)=>{
+      const p = products.find(x=>x.id===id);
+      if(!p) return '';
+      totalItems += qty;
+      totalPrice += p.price * qty;
+      cartProducts.push(p);
+      return `${i+1}. ${p.name} - ${qty} Pcs (₹${(p.price*qty).toLocaleString('en-IN')})`;
+    }).filter(Boolean);
+
+    const message = `Hello, mujhe ye order karna hai:\n${lines.join('\n')}\nTotal Items: ${totalItems}\nTotal Price: ₹${totalPrice.toLocaleString('en-IN')}`;
+
+    const btn = document.getElementById('cartSendBtn');
+    const originalHTML = btn.innerHTML;
+    const withImages = cartProducts.filter(p=>p.image);
+
     if(withImages.length){
+      btn.disabled = true; btn.textContent = 'Photos taiyaar ho rahi hain...';
+      let files = [];
       try{
         files = await Promise.all(withImages.slice(0,10).map(async p=>{
           const res = await fetch(p.image);
@@ -294,150 +637,25 @@
           return new File([blob], `${p.name}.${ext}`, { type: blob.type });
         }));
       }catch(err){ files = []; }
-    }
-    const names = list.map(p=>p.name).join(', ');
-    try{
-      // Photo already carries the price, so we share ONLY the image(s) — no caption text.
-      if(files.length && navigator.canShare && navigator.canShare({ files })){
-        await navigator.share({ files });
-        return;
-      }
-      if(navigator.share){
-        await navigator.share({ text: names });
-        return;
-      }
-    }catch(err){ /* user cancelled or share blocked — fall back below */ }
-    window.open(`https://wa.me/?text=${encodeURIComponent(names)}`, '_blank');
-  }
-  window.shareProducts = shareProducts;
 
-  function toDataURL(url){
-    return fetch(url)
-      .then(res=>res.blob())
-      .then(blob=>new Promise((resolve,reject)=>{
-        const reader = new FileReader();
-        reader.onloadend = ()=>resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      }));
-  }
-
-  // Resizes (never crops) so the full photo is kept intact — page will be shaped
-  // to match this image exactly, so nothing needs to be cut off.
-  function resizeImageForPDF(dataUrl, maxDim){
-    return new Promise((resolve,reject)=>{
-      const img = new Image();
-      img.onload = ()=>{
-        let w = img.width, h = img.height;
-        if(Math.max(w,h) > maxDim){
-          const scale = maxDim / Math.max(w,h);
-          w = Math.round(w*scale); h = Math.round(h*scale);
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.82), width:w, height:h });
-      };
-      img.onerror = reject;
-      img.src = dataUrl;
-    });
-  }
-
-  function drawPlaceholder(doc, x, y, w, h, category){
-    const [g1] = getColors(category);
-    doc.setFillColor(g1);
-    doc.roundedRect(x, y, w, h, 3, 3, 'F');
-    doc.setFont('helvetica','italic');
-    doc.setFontSize(13);
-    doc.setTextColor('#FFFFFF');
-    doc.text(category, x+w/2, y+h/2, { align:'center' });
-  }
-
-  async function generateCatalogPDF(list){
-  const { jsPDF } = window.jspdf;
-  let doc = null;
-
-  for(let i=0; i<list.length; i++){
-    const p = list[i];
-
-    if(p.image){
       try{
-        const raw = await toDataURL(p.image);
-        const img = await resizeImageForPDF(raw, 1200);
-        
-        // फोटो चौड़ी (Horizontal) है या लंबी (Vertical), यह चेक करेगा
-        const isLandscape = img.width > img.height;
-        const pageW = isLandscape ? 130 : 100;
-        const pageH = pageW * (img.height / img.width);
-        const orientation = isLandscape ? 'landscape' : 'portrait';
-
-        if(!doc) {
-          doc = new jsPDF({ orientation: orientation, unit:'mm', format:[pageW, pageH] });
-        } else {
-          doc.addPage([pageW, pageH], orientation);
+        if(files.length && navigator.canShare && navigator.canShare({ files })){
+          await navigator.share({ files, text: message });
+          btn.disabled = false; btn.innerHTML = originalHTML;
+          return;
         }
-        
-        doc.addImage(img.dataUrl, 'JPEG', 0, 0, pageW, pageH, undefined, 'FAST');
-        continue;
-      }catch(e){ /* image fail fallback */ }
+      }catch(err){ /* cancelled or blocked — fall back to text-only link below */ }
+
+      btn.disabled = false; btn.innerHTML = originalHTML;
     }
 
-      // Only used when an item has no photo at all.
-      const pageW = 100, pageH = 130;
-      if(!doc) doc = new jsPDF({ unit:'mm', format:[pageW, pageH] });
-      else doc.addPage([pageW, pageH]);
-      drawPlaceholder(doc, 8, 8, pageW-16, pageH-50, p.category);
-      doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor('#222222');
-      doc.text(p.name, 8, pageH-32, { maxWidth: pageW-16 });
-      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor('#999999');
-      doc.text(p.category, 8, pageH-24);
-      doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor('#B5862F');
-      doc.text('Rs. ' + p.price.toLocaleString('en-IN'), 8, pageH-12);
-    }
-    return doc.output('blob');
+    // Fallback: reliable text-only order message (always works, every device)
+    const waUrl = WHATSAPP_NUMBER
+      ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
+      : `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
   }
-
-  async function sendAsPDF(list){
-    if(!list.length) return;
-    const btn = document.getElementById('sendPdfBtn');
-    const label = document.getElementById('pdfBtnLabel');
-    btn.disabled = true; label.textContent = 'PDF ban raha hai...';
-    try{
-      const blob = await generateCatalogPDF(list);
-      const stamp = new Date().toISOString().replace(/[-:T]/g,'').slice(0,14);
-      const filename = `rangrezz-catalog-${stamp}.pdf`;
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-      label.textContent = '✓ Download ho gaya';
-    }catch(err){
-      alert('PDF banane mein dikkat aayi, dobara try karein.');
-      console.error(err);
-      label.textContent = 'PDF banake bhejo';
-    }
-    btn.disabled = false;
-    setTimeout(()=>{ label.textContent = 'PDF banake bhejo'; }, 2500);
-  }
-
-  function toggleSelect(id){
-    if(selected.has(id)) selected.delete(id); else selected.add(id);
-    const card = document.querySelector(`.card[data-id="${id}"]`);
-    if(card){
-      card.classList.toggle('selected', selected.has(id));
-      card.querySelector('.select-box').classList.toggle('checked', selected.has(id));
-    }
-    renderSelectionBar();
-  }
-  window.toggleSelect = toggleSelect;
-
-  function renderSelectionBar(){
-    const bar = document.getElementById('selectionBar');
-    if(selected.size === 0){ bar.classList.remove('show'); return; }
-    bar.classList.add('show');
-    document.getElementById('selCount').textContent = `${selected.size} item${selected.size>1?'s':''} selected`;
-  }
+  window.sendCartOrder = sendCartOrder;
 
   function renderChips(){
     const wrap = document.getElementById('catChips');
@@ -460,34 +678,29 @@
     const imageInner = p.image
       ? `<img src="${p.image}" alt="${p.name}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">`
       : `<span>${p.category}</span>`;
-    const isSel = selected.has(p.id);
+    const isSel = cart.has(p.id);
     return `
       <div class="card ${isSel?'selected':''}" data-id="${p.id}">
-        <div class="swatch" style="--g1:${g1};--g2:${g2}" onclick="toggleSelect(${p.id})">
-          <div class="select-box ${isSel?'checked':''}">
+        <div class="swatch" style="--g1:${g1};--g2:${g2}" onclick="openLightbox(${p.id})">
+          <div class="select-box ${isSel?'checked':''}" onclick="event.stopPropagation(); toggleSelect(${p.id})">
             <svg viewBox="0 0 24 24" fill="none" stroke="#1B0E14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </div>
           ${imageInner}
         </div>
         <div class="card-body">
           <div class="cat-tag">${p.category}</div>
-          <div class="card-name">${p.name}</div>
           <div class="card-price">₹${p.price.toLocaleString('en-IN')}</div>
-          <button class="wa-btn" onclick="shareProducts([products.find(x=>x.id===${p.id})])">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.9.53 3.68 1.44 5.2L2 22l4.94-1.4A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.44-4.38-1.2l-.31-.19-3.06.87.85-2.98-.2-.32A7.94 7.94 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
-            Send on WhatsApp
-          </button>
         </div>
       </div>`;
   }
 
   function toggleSelectAll(){
     const filtered = getFiltered();
-    const allSelected = filtered.length > 0 && filtered.every(p=>selected.has(p.id));
+    const allSelected = filtered.length > 0 && filtered.every(p=>cart.has(p.id));
     if(allSelected){
-      filtered.forEach(p=>selected.delete(p.id));
+      filtered.forEach(p=>cart.delete(p.id));
     } else {
-      filtered.forEach(p=>selected.add(p.id));
+      filtered.forEach(p=>{ if(!cart.has(p.id)) cart.set(p.id, 1); });
     }
     render();
   }
@@ -502,7 +715,7 @@
     const loadMoreWrap = document.getElementById('loadMoreWrap');
 
     countText.textContent = `${filtered.length} item${filtered.length!==1?'s':''} mile`;
-    const allSelected = filtered.length > 0 && filtered.every(p=>selected.has(p.id));
+    const allSelected = filtered.length > 0 && filtered.every(p=>cart.has(p.id));
     selectAllBtn.textContent = allSelected ? 'Deselect All' : 'Select All';
     selectAllBtn.style.display = filtered.length ? 'inline-block' : 'none';
 
@@ -516,7 +729,8 @@
     const visible = filtered.slice(0, visibleCount);
     grid.innerHTML = visible.map(cardHTML).join('');
     loadMoreWrap.style.display = visibleCount < filtered.length ? 'block' : 'none';
-    renderSelectionBar();
+    renderCartBar();
+    renderCartDrawer();
   }
 
   document.getElementById('searchInput').addEventListener('input', (e)=>{
@@ -532,15 +746,12 @@
       visibleCount = PAGE_SIZE; render();
     });
   });
-  document.getElementById('clearSelBtn').addEventListener('click', ()=>{ selected.clear(); render(); });
-  document.getElementById('sendSelectedBtn').addEventListener('click', ()=>{
-    const list = products.filter(p=>selected.has(p.id));
-    if(list.length) shareProducts(list);
-  });
-  document.getElementById('sendPdfBtn').addEventListener('click', ()=>{
-    const list = products.filter(p=>selected.has(p.id));
-    if(list.length) sendAsPDF(list);
-  });
+  document.getElementById('viewCartBtn').addEventListener('click', openCart);
+  document.getElementById('cartBarClearBtn').addEventListener('click', ()=>{ cart.clear(); render(); });
+  document.getElementById('cartCloseBtn').addEventListener('click', closeCart);
+  document.getElementById('cartOverlay').addEventListener('click', closeCart);
+  document.getElementById('cartClearBtn').addEventListener('click', ()=>{ cart.clear(); closeCart(); render(); });
+  document.getElementById('cartSendBtn').addEventListener('click', sendCartOrder);
 
   loadProductsFromSheet(); 
 </script>
